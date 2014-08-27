@@ -1,0 +1,13 @@
+{
+    "asi": false,
+    "browser": true,
+    "eqeqeq": true,
+    "evil": false,
+    "loopfunc": false,
+    "node": true,
+    "quotmark": false,
+    "shadow": false,
+    "strict": false,
+    "undef": true,
+    "unused": false
+}
