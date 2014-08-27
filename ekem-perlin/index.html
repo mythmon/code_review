@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<script type="text/javascript" src="perlinSimplex.js"></script>
+	<style type="text/css">
+		canvas {
+			width: 500px;
+			height: 500px;
+		}
+		ul {
+			margin: 0px;
+			padding: 0px;
+			list-style: none;
+		}
+	</style>
+	</head>
+	<body>
+	<script type="text/javascript">
+		var WIDTH = 500;
+		var HEIGHT = 500;
+
+		if (!this.addChild) {
+			var addChild = function(p, s) {
+				var c = document.createElement(s);
+				p.appendChild(c);
+				return c;
+			};
+		}
+
+		if (!this.Prng) {
+			var Prng = function() {
+				var iMersenne = 2147483647;
+				var rnd = function(seed) {
+					if (arguments.length) {
+						that.seed = arguments[0];
+					}
+					that.seed = that.seed*16807%iMersenne;
+					return that.seed;
+				};
+				var that = {
+					seed: 123,
+					rnd: rnd,
+					random: function(seed) {
+						if (arguments.length) {
+							that.seed = arguments[0];
+						}
+						return rnd()/iMersenne;
+					}
+				};
+				return that;
+			}();
+		}
+		var dBody = document.getElementsByTagName('body')[0];
+		var dUl = addChild(dBody, 'ul');
+		
+		var li1;
+		var c;
+		var ctx;
+		var imgData;
+		var aPixels;
+
+		var P;
+		var ii, x, y, xx, yy;
+		var zz = Math.random()*100;
+
+		for (var l = 0; l < 1; l++){
+		li1 = addChild(dUl, 'li');
+		c = addChild(li1, 'canvas');
+		ctx = c.getContext("2d");
+		imgData = ctx.createImageData(WIDTH,HEIGHT);
+		aPixels = imgData.data;
+		c.width = WIDTH;
+		c.height = HEIGHT;
+
+		var P = PerlinSimplex;
+		Prng.seed = Math.random()*100;
+		P.setRng(Prng);
+		P.noiseDetail(10,.5);
+		var fScl = .01;
+		for (var i = 0; i < aPixels.length; i+=4) {
+			ii = Math.floor(i/4);
+			x = ii%WIDTH;
+			y = Math.floor(ii/WIDTH);
+			xx = 0 + x*fScl;
+			yy = 0 + y*fScl;
+			//fNoise = Math.floor(P.noise(xx,yy,zz)*256);
+			//fNoise = P.noise(xx,yy,zz)>.5?0:256;
+			fNoise = P.noise(xx,yy,zz);
+			
+			if (fNoise < .1) {
+				aPixels[i] = 0;
+				aPixels[i+1] = 0;
+				aPixels[i+2] = 50;
+			}
+			else if (fNoise > .499 && fNoise <.5) {
+				aPixels[i] = 120;
+				aPixels[i+1] = 120;
+				aPixels[i+2] = 0;
+			}
+			else if (fNoise < .5) {
+				aPixels[i] = 0;
+				aPixels[i+1] = 0;
+				aPixels[i+2] = 50;
+			}
+			else if (fNoise > .8){
+				aPixels[i] = 255;
+				aPixels[i+1] = 255;
+				aPixels[i+2] = 255;
+			}
+			else if (fNoise > .7){
+				aPixels[i] = 100;
+				aPixels[i+1] = 100;
+				aPixels[i+2] = 100;
+			}
+
+
+			else {
+				aPixels[i] = 50;
+				aPixels[i+1] = 100;
+				aPixels[i+2] = 0;
+			}
+			//aPixels[i] = aPixels[i+1] = aPixels[i+2] = fNoise;
+			aPixels[i+3] = 255;
+		}
+		ctx.putImageData(imgData, 0, 0);
+		}
+	</script>
+	</body>
+</html>
